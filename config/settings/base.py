@@ -127,11 +127,7 @@ STATIC_URL = "static/"
 
 # Email
 
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
+
 LOG_LEVEL = env("LOG_LEVEL", default="INFO")
 
 
