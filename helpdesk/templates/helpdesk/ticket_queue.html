@@ -1,0 +1,167 @@
+{% extends "helpdesk/base.html" %}
+
+{% block title %}
+Очередь ИТ-отдела — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<h1 class="h3 mb-3">Очередь ИТ-отдела</h1>
+
+<form method="get" class="card card-body mb-4">
+
+    <div class="row g-3">
+
+        <div class="col-md-4">
+            <label class="form-label">Поиск</label>
+            <input
+                type="text"
+                name="search"
+                class="form-control"
+                placeholder="Тема или описание"
+                value="{{ search }}"
+            >
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
+                <option value="">Все</option>
+
+                <option value="new"
+                    {% if selected_status == "new" %}selected{% endif %}>
+                    Новая
+                </option>
+
+                <option value="in_progress"
+                    {% if selected_status == "in_progress" %}selected{% endif %}>
+                    В работе
+                </option>
+
+                <option value="done"
+                    {% if selected_status == "done" %}selected{% endif %}>
+                    Выполнена
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Приоритет</label>
+            <select name="priority" class="form-select">
+                <option value="">Все</option>
+
+                <option value="low"
+                    {% if selected_priority == "low" %}selected{% endif %}>
+                    Низкий
+                </option>
+
+                <option value="medium"
+                    {% if selected_priority == "medium" %}selected{% endif %}>
+                    Средний
+                </option>
+
+                <option value="high"
+                    {% if selected_priority == "high" %}selected{% endif %}>
+                    Высокий
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label class="form-label">Категория</label>
+            <select name="category" class="form-select">
+                <option value="">Все</option>
+
+                {% for category in categories %}
+                    <option
+                        value="{{ category.id }}"
+                        {% if selected_category == category.id|stringformat:"s" %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary w-100" type="submit">
+                Найти
+            </button>
+        </div>
+
+    </div>
+
+</form>
+
+<table class="table table-hover">
+
+    <thead>
+        <tr>
+            <th>Тема</th>
+            <th>Категория</th>
+            <th>Приоритет</th>
+            <th>Статус</th>
+            <th>Автор</th>
+            <th>Исполнитель</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        {% for ticket in tickets %}
+
+            <tr>
+
+                <td>
+                    <a href="{% url 'ticket_detail' ticket.pk %}">
+                        {{ ticket.title }}
+                    </a>
+                </td>
+
+                <td>
+                    {% if ticket.category %}
+                        {{ ticket.category }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+
+                <td>
+                    {{ ticket.get_priority_display }}
+                </td>
+
+                <td>
+                    {{ ticket.get_status_display }}
+                </td>
+
+                <td>
+                    {{ ticket.created_by.get_full_name|default:ticket.created_by.username }}
+                </td>
+
+                <td>
+                    {% if ticket.assignee %}
+                        {{ ticket.assignee.get_full_name|default:ticket.assignee.username }}
+                    {% else %}
+                        Не назначен
+                    {% endif %}
+                </td>
+
+            </tr>
+
+        {% empty %}
+
+            <tr>
+                <td colspan="6" class="text-center text-muted">
+                    Заявок не найдено.
+                </td>
+            </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
+
+{% endblock %}

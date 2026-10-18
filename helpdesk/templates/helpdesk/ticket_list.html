@@ -1,0 +1,53 @@
+{% extends "helpdesk/base.html" %}
+
+{% block title %}
+Мои заявки — {{ block.super }}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Мои заявки</h1>
+
+    <a href="{% url 'ticket_create' %}" class="btn btn-primary">
+        Создать заявку
+    </a>
+</div>
+
+<p class="text-muted">
+    Всего заявок: {{ tickets|length }}
+</p>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>Тема</th>
+            <th>Описание</th>
+            <th>Приоритет</th>
+            <th>Статус</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for ticket in tickets %}
+            <tr>
+                <td>
+    <a href="{% url 'ticket_detail' ticket.pk %}">
+        {{ ticket.title }}
+    </a>
+</td>
+                <td>{{ ticket.description }}</td>
+                <td>{{ ticket.get_priority_display }}</td>
+                <td>{{ ticket.get_status_display }}</td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4" class="text-center text-muted">
+                    Заявок пока нет.
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

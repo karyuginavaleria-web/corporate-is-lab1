@@ -1,0 +1,74 @@
+{% extends "helpdesk/base.html" %}
+
+{% block title %}
+Заявка — {{ ticket.title }}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Заявка №{{ ticket.id }}</h1>
+
+    <a href="{% url 'ticket_list' %}" class="btn btn-secondary">
+        Назад к заявкам
+    </a>
+   {% if can_edit %}
+    <a href="{% url 'ticket_update' ticket.pk %}" class="btn btn-primary">
+        Редактировать
+    </a>
+{% endif %}
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <h2 class="h4">{{ ticket.title }}</h2>
+
+        <hr>
+
+        <p>
+            <strong>Описание:</strong><br>
+            {{ ticket.description }}
+        </p>
+
+        <p>
+            <strong>Категория:</strong>
+            {% if ticket.category %}
+                {{ ticket.category }}
+            {% else %}
+                Не указана
+            {% endif %}
+        </p>
+
+        <p>
+            <strong>Приоритет:</strong>
+            {{ ticket.get_priority_display }}
+        </p>
+
+        <p>
+            <strong>Статус:</strong>
+            {{ ticket.get_status_display }}
+        </p>
+
+        <p>
+            <strong>Автор:</strong>
+            {{ ticket.created_by.get_full_name|default:ticket.created_by.username }}
+        </p>
+
+        <p>
+            <strong>Исполнитель:</strong>
+            {% if ticket.assignee %}
+                {{ ticket.assignee.get_full_name|default:ticket.assignee.username }}
+            {% else %}
+                Не назначен
+            {% endif %}
+        </p>
+
+        <p class="text-muted mb-0">
+            Создана: {{ ticket.created_at|date:"d.m.Y H:i" }}
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}
